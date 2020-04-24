@@ -1,10 +1,14 @@
 require("dotenv").config();
-import express from "express";
+import express, { Application } from "express";
+import { connectDatabase } from "./database/index";
 
-const app = express();
+const mount = async (app: Application) => {
+  const db = await connectDatabase();
+  app.listen(process.env.PORT, () =>
+    console.log(`[server started]: [port ${process.env.PORT}]`)
+  );
+  const todos = await db.todos.find({}).toArray();
+  console.log(todos);
+};
 
-app.get("/", (req, res) => res.send("Hello world"));
-
-app.listen(process.env.PORT, () =>
-  console.log(`[server started]: [port ${process.env.PORT}]`)
-);
+mount(express());

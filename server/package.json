@@ -4,7 +4,8 @@
   "description": "Demo project demonstrating use of graphql and typescript at the backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon src/index.ts",
+    "build": "tsc -p ./"
   },
   "author": "Tajammul Pasha",
   "license": "ISC",

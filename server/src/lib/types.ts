@@ -4,6 +4,7 @@ export interface Todo {
   _id: ObjectId;
   todo: string;
   description: string;
+  completed: boolean;
 }
 
 export interface Database {

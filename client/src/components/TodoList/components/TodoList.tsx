@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useQuery, useMutation } from "react-apollo";
 import { gql } from "apollo-boost";
+import { List, Button, Typography, Badge } from "antd";
 
 import { Todos } from "../__generated__/Todos";
 import {
@@ -17,7 +18,6 @@ import {
   AddTodoVariables,
 } from "../__generated__/AddTodo";
 
-import TodoItem from "./TodoItem";
 import Search from "./Search";
 import "../styles/todo.css";
 
@@ -100,16 +100,34 @@ const TodoList = ({ title }: Props) => {
 
   const todos = data && data.todos;
 
-  const todoItems =
-    todos &&
-    todos.map((todo) => (
-      <TodoItem
-        key={todo._id}
-        {...todo}
-        completeTodo={handleCompleteTodo}
-        deleteTodo={handleDeleteTodo}
-      />
-    ));
+  const todoItems = todos && (
+    <List
+      itemLayout="horizontal"
+      dataSource={todos}
+      renderItem={({ todo, description, _id, completed }) => (
+        <List.Item
+          actions={[
+            <Button
+              type="link"
+              onClick={() => handleCompleteTodo(_id, !completed)}
+            >
+              {completed ? <Badge text="completed" color="orange" /> : "Done"}
+            </Button>,
+            <Button type="link" onClick={() => handleDeleteTodo(_id)} danger>
+              Delete
+            </Button>,
+          ]}
+        >
+          {/* {completed && } */}
+          <List.Item.Meta
+            title={todo}
+            description={description}
+            style={completed ? { textDecoration: "line-through" } : {}}
+          />
+        </List.Item>
+      )}
+    />
+  );
 
   const deleteMessage = dLoad && <h2>deleting todo...</h2>;
 
@@ -118,7 +136,9 @@ const TodoList = ({ title }: Props) => {
 
   return (
     <div className="container">
-      <h1>{title}</h1>
+      <Typography.Title level={2} style={{ textAlign: "center" }}>
+        {title}
+      </Typography.Title>
       <Search handleNewTodo={handleNewTodo} addLoad={addLoad} />
       <div>{todoItems}</div>
       {deleteMessage}

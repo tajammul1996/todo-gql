@@ -4,19 +4,20 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CompleteTodo
+// GraphQL mutation operation: DeleteTodo
 // ====================================================
 
-export interface CompleteTodo_completeTodo {
+export interface DeleteTodo_deleteTodo {
   __typename: "Todo";
   _id: string;
+  todo: string;
+  description: string;
 }
 
-export interface CompleteTodo {
-  completeTodo: CompleteTodo_completeTodo;
+export interface DeleteTodo {
+  deleteTodo: DeleteTodo_deleteTodo;
 }
 
-export interface CompleteTodoVariables {
+export interface DeleteTodoVariables {
   _id: string;
-  completed: boolean;
 }

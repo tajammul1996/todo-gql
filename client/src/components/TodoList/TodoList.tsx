@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "react-apollo";
 import { gql } from "apollo-boost";
 
@@ -11,6 +11,11 @@ import {
   DeleteTodo as DeleteTodoData,
   DeleteTodoVariables,
 } from "./__generated__/DeleteTodo";
+
+import {
+  AddTodo as AddTodoData,
+  AddTodoVariables,
+} from "./__generated__/AddTodo";
 
 import TodoItem from "./TodoItem";
 
@@ -47,8 +52,21 @@ const DELETE_TODO = gql`
   }
 `;
 
+const ADD_TODO = gql`
+  mutation AddTodo($todo: String!, $description: String!) {
+    addTodo(todo: $todo, description: $description) {
+      todo
+      description
+    }
+  }
+`;
+
 const TodoList = ({ title }: Props) => {
+  const [todo, setTodo] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
   const { data, refetch, loading, error } = useQuery<Todos>(TODOS);
+
   const [completeTodo] = useMutation<CompleteTodoData, CompleteTodoVariables>(
     COMPLETE_TODO
   );
@@ -58,14 +76,29 @@ const TodoList = ({ title }: Props) => {
     DeleteTodoVariables
   >(DELETE_TODO);
 
+  const [addTodo, { loading: addLoad, error: addErr }] = useMutation<
+    AddTodoData,
+    AddTodoVariables
+  >(ADD_TODO);
+
   const handleCompleteTodo = async (_id: string, completed: boolean) => {
     await completeTodo({ variables: { _id, completed } });
     refetch();
   };
 
-  const handleDeleteTodo = async (_id: string) => {
+  const handleDeleteTodo = async (_id: string): Promise<void> => {
     await deleteTodo({ variables: { _id } });
     refetch();
+  };
+
+  const handleNewTodo = async (
+    todo: string,
+    description: string
+  ): Promise<void> => {
+    await addTodo({ variables: { todo, description } });
+    refetch();
+    setDescription("");
+    setTodo("");
   };
 
   const todos = data && data.todos;
@@ -89,6 +122,23 @@ const TodoList = ({ title }: Props) => {
   return (
     <>
       <h1>{title}</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="add new todo.."
+          onChange={(e) => setTodo(e.target.value)}
+          value={todo}
+        />
+        <input
+          type="text"
+          placeholder="add  todo description.."
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
+        />
+        <button onClick={() => handleNewTodo(todo, description)}>
+          Add Todo
+        </button>
+      </div>
       <div>{todoItems}</div>
       {deleteMessage}
     </>

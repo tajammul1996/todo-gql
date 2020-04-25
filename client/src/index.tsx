@@ -4,7 +4,7 @@ import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 import "./index.css";
 
-import TodoList from "./components/TodoList/TodoList";
+import TodoList from "./components/TodoList/components/TodoList";
 
 const client = new ApolloClient({
   uri: "/api",

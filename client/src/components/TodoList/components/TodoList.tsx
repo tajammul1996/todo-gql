@@ -2,22 +2,24 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "react-apollo";
 import { gql } from "apollo-boost";
 
-import { Todos } from "./__generated__/Todos";
+import { Todos } from "../__generated__/Todos";
 import {
   CompleteTodo as CompleteTodoData,
   CompleteTodoVariables,
-} from "./__generated__/CompleteTodo";
+} from "../__generated__/CompleteTodo";
 import {
   DeleteTodo as DeleteTodoData,
   DeleteTodoVariables,
-} from "./__generated__/DeleteTodo";
+} from "../__generated__/DeleteTodo";
 
 import {
   AddTodo as AddTodoData,
   AddTodoVariables,
-} from "./__generated__/AddTodo";
+} from "../__generated__/AddTodo";
 
 import TodoItem from "./TodoItem";
+import Search from "./Search";
+import "../styles/todo.css";
 
 interface Props {
   title: string;
@@ -62,9 +64,6 @@ const ADD_TODO = gql`
 `;
 
 const TodoList = ({ title }: Props) => {
-  const [todo, setTodo] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-
   const { data, refetch, loading, error } = useQuery<Todos>(TODOS);
 
   const [completeTodo] = useMutation<CompleteTodoData, CompleteTodoVariables>(
@@ -97,8 +96,6 @@ const TodoList = ({ title }: Props) => {
   ): Promise<void> => {
     await addTodo({ variables: { todo, description } });
     refetch();
-    setDescription("");
-    setTodo("");
   };
 
   const todos = data && data.todos;
@@ -120,28 +117,12 @@ const TodoList = ({ title }: Props) => {
   if (error) return <h1>Something went wrong</h1>;
 
   return (
-    <>
+    <div className="container">
       <h1>{title}</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="add new todo.."
-          onChange={(e) => setTodo(e.target.value)}
-          value={todo}
-        />
-        <input
-          type="text"
-          placeholder="add  todo description.."
-          onChange={(e) => setDescription(e.target.value)}
-          value={description}
-        />
-        <button onClick={() => handleNewTodo(todo, description)}>
-          Add Todo
-        </button>
-      </div>
+      <Search handleNewTodo={handleNewTodo} addLoad={addLoad} />
       <div>{todoItems}</div>
       {deleteMessage}
-    </>
+    </div>
   );
 };
 
